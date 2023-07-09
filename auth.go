@@ -1,0 +1,55 @@
+package twitter_go_graphql
+
+import (
+	"context"
+	"fmt"
+	"regexp"
+	"strings"
+)
+
+var (
+	UsernameMinLength = 2
+	PasswordMinLength = 6
+)
+
+var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
+type AuthService interface {
+	Register(ctx context.Context, input RegisterInput) (AuthResponse, error)
+}
+
+type AuthResponse struct {
+	AccessToken string
+	User        User
+}
+type RegisterInput struct {
+	Email           string
+	UserName        string
+	Password        string
+	ConfirmPassword string
+}
+
+func (r *RegisterInput) Sanitize() {
+	r.Email = strings.TrimSpace(r.Email)
+	r.Email = strings.ToLower(r.Email)
+	r.UserName = strings.TrimSpace(r.UserName)
+}
+
+func (r RegisterInput) Validate() error {
+	if len(r.UserName) < UsernameMinLength {
+		return fmt.Errorf("%w: username must be at least %d characters long", ErrValidation, UsernameMinLength)
+	}
+
+	if !emailRegex.MatchString(r.Email) {
+		return fmt.Errorf("%w: email has wrong format", ErrValidation)
+	}
+
+	if len(r.Password) < PasswordMinLength {
+		return fmt.Errorf("%w: password must be at least %d characters long", ErrValidation, PasswordMinLength)
+	}
+
+	if r.Password != r.ConfirmPassword {
+		return fmt.Errorf("%w: password confimation doesn't match", ErrValidation)
+	}
+	return nil
+}
