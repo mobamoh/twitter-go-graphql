@@ -12,10 +12,13 @@ type UserRepo struct {
 	db *DB
 }
 
+func NewUserRepo(db *DB) *UserRepo {
+	return &UserRepo{db: db}
+}
 func (r *UserRepo) GetByUsername(ctx context.Context, username string) (twitter.User, error) {
 	query := `SELECT * FROM users WHERE username= $1 LIMIT 1;`
 	user := twitter.User{}
-	if err := pgxscan.Get(ctx, r.db.Pool, user, query, username); err != nil {
+	if err := pgxscan.Get(ctx, r.db.Pool, &user, query, username); err != nil {
 		if pgxscan.NotFound(err) {
 			return twitter.User{}, twitter.ErrNotFound
 		}
@@ -27,7 +30,7 @@ func (r *UserRepo) GetByUsername(ctx context.Context, username string) (twitter.
 func (r *UserRepo) GetByEmail(ctx context.Context, email string) (twitter.User, error) {
 	query := `SELECT * FROM users WHERE email= $1 LIMIT 1;`
 	user := twitter.User{}
-	if err := pgxscan.Get(ctx, r.db.Pool, user, query, email); err != nil {
+	if err := pgxscan.Get(ctx, r.db.Pool, &user, query, email); err != nil {
 		if pgxscan.NotFound(err) {
 			return twitter.User{}, twitter.ErrNotFound
 		}
@@ -52,7 +55,7 @@ func (r *UserRepo) Create(ctx context.Context, user twitter.User) (twitter.User,
 func createUser(ctx context.Context, tx pgx.Tx, user twitter.User) (twitter.User, error) {
 	query := `INSERT INTO users(username, email, password) VALUES ($1,$2,$3) RETURNING *;`
 	newUser := twitter.User{}
-	if err := pgxscan.Get(ctx, tx, newUser, query, user.Username, user.Email, user.Password); err != nil {
+	if err := pgxscan.Get(ctx, tx, &newUser, query, user.Username, user.Email, user.Password); err != nil {
 		return twitter.User{}, fmt.Errorf("error insert: %v", err)
 	}
 	return newUser, nil

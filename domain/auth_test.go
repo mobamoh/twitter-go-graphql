@@ -12,7 +12,7 @@ import (
 
 func TestAuthService_Register(t *testing.T) {
 	validInput := twitter.RegisterInput{
-		UserName:        "Mo",
+		Username:        "Mo",
 		Email:           "mo@mail.com",
 		Password:        "password",
 		ConfirmPassword: "password",
@@ -76,7 +76,7 @@ func TestAuthService_Register(t *testing.T) {
 
 	t.Run("invalid input", func(t *testing.T) {
 		invalidInput := twitter.RegisterInput{
-			UserName:        "M",
+			Username:        "M",
 			Email:           "mo",
 			Password:        "password",
 			ConfirmPassword: "wrong",

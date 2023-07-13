@@ -8,13 +8,13 @@ import (
 
 func TestRegisterInput_Sanitize(t *testing.T) {
 	input := RegisterInput{
-		UserName:        " Mo   ",
+		Username:        " Mo   ",
 		Email:           "  mo@MAIL.com    ",
 		Password:        "password",
 		ConfirmPassword: "password",
 	}
 	expected := RegisterInput{
-		UserName:        "Mo",
+		Username:        "Mo",
 		Email:           "mo@mail.com",
 		Password:        "password",
 		ConfirmPassword: "password",
@@ -31,7 +31,7 @@ func TestRegisterInput_Validate(t *testing.T) {
 		{
 			name: "valid",
 			input: RegisterInput{
-				UserName:        "Mo",
+				Username:        "Mo",
 				Email:           "mo@mail.com",
 				Password:        "password",
 				ConfirmPassword: "password",
@@ -41,7 +41,7 @@ func TestRegisterInput_Validate(t *testing.T) {
 		{
 			name: "invalid username",
 			input: RegisterInput{
-				UserName:        "M",
+				Username:        "M",
 				Email:           "mo@mail.com",
 				Password:        "password",
 				ConfirmPassword: "password",
@@ -51,7 +51,7 @@ func TestRegisterInput_Validate(t *testing.T) {
 		{
 			name: "invalid email",
 			input: RegisterInput{
-				UserName:        "Mo",
+				Username:        "Mo",
 				Email:           "mo",
 				Password:        "password",
 				ConfirmPassword: "password",
@@ -61,7 +61,7 @@ func TestRegisterInput_Validate(t *testing.T) {
 		{
 			name: "invalid password",
 			input: RegisterInput{
-				UserName:        "Mo",
+				Username:        "Mo",
 				Email:           "mo@mail.com",
 				Password:        "pass",
 				ConfirmPassword: "pass",
@@ -71,7 +71,7 @@ func TestRegisterInput_Validate(t *testing.T) {
 		{
 			name: "invalid password confirmation",
 			input: RegisterInput{
-				UserName:        "Mo",
+				Username:        "Mo",
 				Email:           "mo@mail.com",
 				Password:        "password",
 				ConfirmPassword: "wrong",

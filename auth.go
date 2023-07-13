@@ -25,7 +25,7 @@ type AuthResponse struct {
 }
 type RegisterInput struct {
 	Email           string
-	UserName        string
+	Username        string
 	Password        string
 	ConfirmPassword string
 }
@@ -33,11 +33,11 @@ type RegisterInput struct {
 func (r *RegisterInput) Sanitize() {
 	r.Email = strings.TrimSpace(r.Email)
 	r.Email = strings.ToLower(r.Email)
-	r.UserName = strings.TrimSpace(r.UserName)
+	r.Username = strings.TrimSpace(r.Username)
 }
 
 func (r RegisterInput) Validate() error {
-	if len(r.UserName) < UsernameMinLength {
+	if len(r.Username) < UsernameMinLength {
 		return fmt.Errorf("%w: username must be at least %d characters long", ErrValidation, UsernameMinLength)
 	}
 

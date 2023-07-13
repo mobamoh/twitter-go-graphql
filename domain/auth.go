@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"errors"
+	"fmt"
 	twitter "github.com/mobamoh/twitter-go-graphql"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -26,7 +27,7 @@ func (svc *AuthService) Register(ctx context.Context, input twitter.RegisterInpu
 		return twitter.AuthResponse{}, err
 	}
 
-	if _, err := svc.userRepo.GetByUsername(ctx, input.UserName); !errors.Is(err, twitter.ErrNotFound) {
+	if _, err := svc.userRepo.GetByUsername(ctx, input.Username); !errors.Is(err, twitter.ErrNotFound) {
 		return twitter.AuthResponse{}, twitter.ErrUsernameTaken
 	}
 
@@ -35,7 +36,7 @@ func (svc *AuthService) Register(ctx context.Context, input twitter.RegisterInpu
 	}
 
 	user := twitter.User{
-		Username: input.UserName,
+		Username: input.Username,
 		Email:    input.Email,
 	}
 
@@ -46,7 +47,7 @@ func (svc *AuthService) Register(ctx context.Context, input twitter.RegisterInpu
 	user.Password = string(hashPwd)
 	user, err = svc.userRepo.Create(ctx, user)
 	if err != nil {
-		return twitter.AuthResponse{}, twitter.ErrServer
+		return twitter.AuthResponse{}, fmt.Errorf("%w: %v", twitter.ErrServer, err)
 	}
 	return twitter.AuthResponse{
 		AccessToken: "token",
