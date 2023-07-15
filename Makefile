@@ -14,3 +14,5 @@ drop:
 migration:
 	@read -p "Enter migration name: " name; \
 		migrate create -ext sql -dir postgres/migrations $$name
+generate:
+	go generate ./...
