@@ -58,5 +58,6 @@ func createUser(ctx context.Context, tx pgx.Tx, user twitter.User) (twitter.User
 	if err := pgxscan.Get(ctx, tx, &newUser, query, user.Username, user.Email, user.Password); err != nil {
 		return twitter.User{}, fmt.Errorf("error insert: %v", err)
 	}
+	tx.Commit(ctx)
 	return newUser, nil
 }
