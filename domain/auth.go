@@ -11,12 +11,14 @@ import (
 var PasswordHashCost = bcrypt.DefaultCost
 
 type AuthService struct {
-	userRepo twitter.UserRepo
+	userRepo         twitter.UserRepo
+	authTokenService twitter.AuthTokenService
 }
 
-func NewAuthService(repo twitter.UserRepo) *AuthService {
+func NewAuthService(repo twitter.UserRepo, tokenService twitter.AuthTokenService) *AuthService {
 	return &AuthService{
-		userRepo: repo,
+		userRepo:         repo,
+		authTokenService: tokenService,
 	}
 }
 
@@ -49,8 +51,13 @@ func (svc *AuthService) Register(ctx context.Context, input twitter.RegisterInpu
 	if err != nil {
 		return twitter.AuthResponse{}, fmt.Errorf("%w: %v", twitter.ErrServer, err)
 	}
+
+	token, err := svc.authTokenService.CreateAccessToken(ctx, user)
+	if err != nil {
+		return twitter.AuthResponse{}, twitter.ErrGenAccessToken
+	}
 	return twitter.AuthResponse{
-		AccessToken: "token",
+		AccessToken: token,
 		User:        user,
 	}, nil
 }
@@ -75,8 +82,14 @@ func (svc *AuthService) Login(ctx context.Context, input twitter.LoginInput) (tw
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		return twitter.AuthResponse{}, twitter.ErrBadCredentials
 	}
+
+	token, err := svc.authTokenService.CreateAccessToken(ctx, user)
+	if err != nil {
+		return twitter.AuthResponse{}, twitter.ErrGenAccessToken
+	}
+
 	return twitter.AuthResponse{
-		AccessToken: "token",
+		AccessToken: token,
 		User:        user,
 	}, nil
 }

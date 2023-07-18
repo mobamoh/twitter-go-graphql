@@ -12,11 +12,15 @@ import (
 )
 
 var SignatureType = jwa.HS256
+var now = time.Now
 
 type TokenService struct {
 	Config *config.Config
 }
 
+func NewTokenService(config *config.Config) *TokenService {
+	return &TokenService{Config: config}
+}
 func (ts *TokenService) ParseTokenFromRequest(ctx context.Context, req *http.Request) (twitter_go_graphql.AuthToken, error) {
 	token, err := jwt.ParseRequest(req,
 		jwt.WithValidate(true),
@@ -81,10 +85,10 @@ func setDefaultToken(token jwt.Token, user twitter_go_graphql.User, lifetime tim
 	if err := token.Set(jwt.IssuerKey, conf.JWT.Issuer); err != nil {
 		return fmt.Errorf("error set jwt issuer key: %v", err)
 	}
-	if err := token.Set(jwt.IssuedAtKey, time.Now().Unix()); err != nil {
+	if err := token.Set(jwt.IssuedAtKey, now().Unix()); err != nil {
 		return fmt.Errorf("error set jwt issued at key: %v", err)
 	}
-	if err := token.Set(jwt.ExpirationKey, time.Now().Add(lifetime).Unix()); err != nil {
+	if err := token.Set(jwt.ExpirationKey, now().Add(lifetime).Unix()); err != nil {
 		return fmt.Errorf("error set jwt expiration key: %v", err)
 	}
 	return nil

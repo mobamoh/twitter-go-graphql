@@ -9,6 +9,7 @@ import (
 	"github.com/mobamoh/twitter-go-graphql/config"
 	"github.com/mobamoh/twitter-go-graphql/domain"
 	"github.com/mobamoh/twitter-go-graphql/graph"
+	"github.com/mobamoh/twitter-go-graphql/jwt"
 	"github.com/mobamoh/twitter-go-graphql/postgres"
 	"log"
 	"net/http"
@@ -33,8 +34,10 @@ func main() {
 	router.Use(middleware.Timeout(time.Second * 60))
 
 	repo := postgres.NewUserRepo(db)
-	authService := domain.NewAuthService(repo)
+	authTokenService := jwt.NewTokenService(conf)
+	authService := domain.NewAuthService(repo, authTokenService)
 
+	router.Use(authMiddleware(authTokenService))
 	router.Handle("/", playground.AltairHandler("Go Twitter Clone", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(
 		graph.NewExecutableSchema(

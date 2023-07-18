@@ -3,6 +3,7 @@ package twitter_go_graphql
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 )
@@ -19,6 +20,12 @@ type AuthService interface {
 	Login(ctx context.Context, input LoginInput) (AuthResponse, error)
 }
 
+type AuthTokenService interface {
+	CreateRefreshToken(ctx context.Context, user User, tokenId string) (string, error)
+	CreateAccessToken(ctx context.Context, user User) (string, error)
+	ParseToken(ctx context.Context, payload string) (AuthToken, error)
+	ParseTokenFromRequest(ctx context.Context, req *http.Request) (AuthToken, error)
+}
 type AuthToken struct {
 	ID  string
 	Sub string

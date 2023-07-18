@@ -1,9 +1,9 @@
 run:
-	go run cmd/graphqlserver/main.go
+	go run cmd/graphqlserver/*.go
 test:
-	go test ./... --count=1
+	go test ./... -count=1
 integration:
-	go test ./... --tags="integration" --count=1
+	go test ./... --tags="integration" -count=1
 mock:
 	mockery --all --keeptree
 migrate:

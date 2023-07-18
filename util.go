@@ -1,14 +1,16 @@
 package twitter_go_graphql
 
 import (
-	"fmt"
+	"errors"
 )
 
 var (
-	ErrValidation     = fmt.Errorf("validation error")
-	ErrNotFound       = fmt.Errorf("not found error")
-	ErrServer         = fmt.Errorf("server error")
-	ErrBadCredentials = fmt.Errorf("bad credentials")
-
-	ErrInvalidAccessToken = fmt.Errorf("invalid access token")
+	ErrValidation         = errors.New("validation error")
+	ErrNotFound           = errors.New("not found error")
+	ErrServer             = errors.New("server error")
+	ErrBadCredentials     = errors.New("bad credentials")
+	ErrInvalidAccessToken = errors.New("invalid access token")
+	ErrNoUserIDInContext  = errors.New("missing user id in context")
+	ErrGenAccessToken     = errors.New("generate access token error")
+	ErrUnauthenticated    = errors.New("unauthenticated error")
 )
