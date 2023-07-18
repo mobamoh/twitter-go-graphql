@@ -20,7 +20,9 @@ var (
 	db               *postgres.DB
 	authTokenService twitter.AuthTokenService
 	authService      twitter.AuthService
+	tweetService     twitter.TweetService
 	userRepo         twitter.UserRepo
+	tweetRepo        twitter.TweetRepo
 )
 
 func TestMain(m *testing.M) {
@@ -41,8 +43,10 @@ func TestMain(m *testing.M) {
 	}
 
 	userRepo = postgres.NewUserRepo(db)
+	tweetRepo = postgres.NewTweetRepo(db)
 	authTokenService = jwt.NewTokenService(config)
 	authService = NewAuthService(userRepo, authTokenService)
+	tweetService = NewTweetService(tweetRepo)
 
 	os.Exit(m.Run())
 }

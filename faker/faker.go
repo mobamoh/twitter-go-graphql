@@ -2,6 +2,7 @@ package faker
 
 import (
 	"fmt"
+	"github.com/mobamoh/twitter-go-graphql/uuid"
 	"math/rand"
 	"time"
 )
@@ -29,4 +30,8 @@ func Username() string {
 
 func Email() string {
 	return fmt.Sprintf("%s@mail.com", RandStringRunes(RandInt(5, 10)))
+}
+
+func UUID() string {
+	return uuid.Generate()
 }

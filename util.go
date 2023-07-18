@@ -13,4 +13,5 @@ var (
 	ErrNoUserIDInContext  = errors.New("missing user id in context")
 	ErrGenAccessToken     = errors.New("generate access token error")
 	ErrUnauthenticated    = errors.New("unauthenticated error")
+	ErrInvalidUUID        = errors.New("invalid uuid error")
 )
