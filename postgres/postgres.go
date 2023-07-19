@@ -23,6 +23,15 @@ func New(ctx context.Context, config *config.Config) *DB {
 	if err != nil {
 		log.Fatalf("cannot parse postgres config %+v", err)
 	}
+	//logrusLogger := &logrus.Logger{
+	//	Out:          os.Stderr,
+	//	Formatter:    new(logrus.JSONFormatter),
+	//	Hooks:        make(logrus.LevelHooks),
+	//	Level:        logrus.InfoLevel,
+	//	ExitFunc:     os.Exit,
+	//	ReportCaller: false,
+	//}
+
 	pool, err := pgxpool.NewWithConfig(ctx, dbConf)
 	if err != nil {
 		log.Fatalf("cannot connect to postgres %+v", err)

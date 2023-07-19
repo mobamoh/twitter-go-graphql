@@ -43,10 +43,26 @@ func (t *TweetRepo) GetByID(ctx context.Context, id string) (twitter_go_graphql.
 	return getTweetByID(ctx, t.db.Pool, id)
 }
 
+func (t *TweetRepo) Delete(ctx context.Context, id string) error {
+	tx, err := t.db.Pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("error starting transaction: %v", err)
+	}
+	defer tx.Rollback(ctx)
+
+	if err := deleteTweet(ctx, tx, id); err != nil {
+		return err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("error commiting: %v", err)
+	}
+	return nil
+}
+
 func createTweet(ctx context.Context, tx pgx.Tx, tweet twitter_go_graphql.Tweet) (twitter_go_graphql.Tweet, error) {
-	query := `INSERT INTO tweets(body, user_id) VALUES ($1,$2) RETURNING *;`
+	query := `INSERT INTO tweets(body, user_id,parent_id) VALUES ($1,$2,$3) RETURNING *;`
 	newTweet := twitter_go_graphql.Tweet{}
-	if err := pgxscan.Get(ctx, tx, &newTweet, query, tweet.Body, tweet.UserID); err != nil {
+	if err := pgxscan.Get(ctx, tx, &newTweet, query, tweet.Body, tweet.UserID, tweet.ParentID); err != nil {
 		return twitter_go_graphql.Tweet{}, fmt.Errorf("error insert: %v", err)
 	}
 	return newTweet, nil
@@ -71,4 +87,12 @@ func listTweets(ctx context.Context, querier pgxscan.Querier) ([]twitter_go_grap
 		return nil, fmt.Errorf("error list tweets: %+v", err)
 	}
 	return tweets, nil
+}
+
+func deleteTweet(ctx context.Context, tx pgx.Tx, id string) error {
+	query := `DELETE FROM tweets WHERE id = $1;`
+	if _, err := tx.Exec(ctx, query, id); err != nil {
+		return fmt.Errorf("error deleting: %v", err)
+	}
+	return nil
 }

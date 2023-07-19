@@ -11,7 +11,7 @@ migrate:
 			-database postgres://postgres:nimda@127.0.0.1:5432/twitter_go_dev?sslmode=disable up
 rollback:
 	migrate -source file://postgres/migrations \
-			-database postgres://postgres:nimda@127.0.0.1:5432/twitter_go_dev?sslmode=disable down
+			-database postgres://postgres:nimda@127.0.0.1:5432/twitter_go_dev?sslmode=disable down 1
 drop:
 	migrate -source file://postgres/migrations \
 			-database postgres://postgres:nimda@127.0.0.1:5432/twitter_go_dev?sslmode=disable drop

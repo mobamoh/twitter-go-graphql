@@ -33,17 +33,24 @@ func main() {
 	router.Use(middleware.RedirectSlashes)
 	router.Use(middleware.Timeout(time.Second * 60))
 
-	repo := postgres.NewUserRepo(db)
+	userRepo := postgres.NewUserRepo(db)
 	authTokenService := jwt.NewTokenService(conf)
-	authService := domain.NewAuthService(repo, authTokenService)
+	authService := domain.NewAuthService(userRepo, authTokenService)
 
+	tweetRepo := postgres.NewTweetRepo(db)
+	tweetService := domain.NewTweetService(tweetRepo)
+
+	router.Use(graph.DataloaderMiddleware(&graph.Repos{
+		UserRepo: userRepo,
+	}))
 	router.Use(authMiddleware(authTokenService))
 	router.Handle("/", playground.AltairHandler("Go Twitter Clone", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(
 		graph.NewExecutableSchema(
 			graph.Config{
 				Resolvers: &graph.Resolver{
-					AuthService: authService,
+					AuthService:  authService,
+					TweetService: tweetService,
 				},
 			},
 		),

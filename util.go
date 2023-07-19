@@ -14,4 +14,5 @@ var (
 	ErrGenAccessToken     = errors.New("generate access token error")
 	ErrUnauthenticated    = errors.New("unauthenticated error")
 	ErrInvalidUUID        = errors.New("invalid uuid error")
+	ErrForbidden          = errors.New("forbidden error")
 )
